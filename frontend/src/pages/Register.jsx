@@ -3,19 +3,33 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../axiosConfig';
 
 const Register = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', organizer: '', password: ''});
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match, please enter again!");
+      return;
+    }
+
+  
     try {
       await axiosInstance.post('/api/auth/register', formData);
       alert('Registration successful. Please log in.');
       navigate('/login');
-    } catch (error) {
-      alert('Registration failed. Please try again.');
-    }
-  };
+    }  catch (error) {
+      // 檢查是否有來自後端的回傳訊息
+      if (error.response && error.response.data && error.response.data.message) {
+          // 這邊就會彈出 "User already exists"
+          alert(error.response.data.message); 
+      } else {
+          // 萬一後端掛掉或沒回傳訊息的保底方案
+          alert('An unexpected error occurred.');
+      }
+      }
+    };
+    
 
   return (
     <div className="max-w-md mx-auto mt-20">
@@ -36,10 +50,32 @@ const Register = () => {
           className="w-full mb-4 p-2 border rounded"
         />
         <input
+          type="tel"
+          pattern="[0-9]{10}"
+          placeholder="phone"
+          value={formData.phone}
+          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+          className="w-full mb-4 p-2 border rounded"
+        />
+         <input
+          type="text"
+          placeholder="Organizer"
+          value={formData.organizer}
+          onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
+          className="w-full mb-4 p-2 border rounded"
+        />
+        <input
           type="password"
           placeholder="Password"
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          className="w-full mb-4 p-2 border rounded"
+        />
+        <input
+          type="password"
+          placeholder="Confirm your Password"
+          value={formData.confirmPassword}
+          onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
         <button type="submit" className="w-full bg-green-600 text-white p-2 rounded">
