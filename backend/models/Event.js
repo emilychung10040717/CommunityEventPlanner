@@ -7,8 +7,8 @@ const eventSchema = new mongoose.Schema({
     capacity : {type: Number, required: true},
     organizer : {type: String, required: true},
     category : {type: String, required: true},
-    ticketRequired  : {type: Boolean},
-    ageRestriction  : {type: Boolean},
+    ticketRequired  : { type: Boolean, required: true },
+    ageRestriction  : { type: Boolean, required: true },
     suburb: {type: String, required: true},
     location: {type: String, required: true},
     expStartDate: { type: Date , required: true},
@@ -16,11 +16,7 @@ const eventSchema = new mongoose.Schema({
     expFinDate: { type: Date , required: true},
     expFinTime: { type: String , required: true},
     description: { type: String },
-    image: {
-        data: Buffer,
-        contentType: String
-    },
-    completed: { type: Boolean, default: false },
+    // image: {type:String},
    
 });
 

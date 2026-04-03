@@ -57,37 +57,54 @@ const Profile = () => {
 
   return (
     <div className="max-w-md mx-auto mt-20">
-      <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
-        <h1 className="text-2xl font-bold mb-4 text-center">Your Profile</h1>
-        <input
-          type="text"
-          placeholder="Name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Phone"
-          value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Organizer"
-          value={formData.organizer}
-          onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <h1 className="text-3xl font-semibold text-center">Your Profile</h1>
+        <div className ="relative">
+            <span className="absolute inset-y-0 left-4 flex items-center text-Black-400"> Name   
+            </span>
+            <input
+              type="text"
+              placeholder="Name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full pl-24 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all"
+            />
+        </div>
+        <div className ="relative">
+            <span className="absolute inset-y-0 left-4 flex items-center text-Black-400"> Email   
+            </span>
+            <input
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full pl-24 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all"
+            />
+        </div>
+        <div className ="relative">
+            <span className="absolute inset-y-0 left-4 flex items-center text-Black-400"> Phone   
+            </span>
+            <input
+              type="text"
+              placeholder="Phone"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="w-full pl-24 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all"
+            />
+        </div>
+        <div className ="relative">
+            <span className="absolute inset-y-0 left-4 flex items-center text-Black-400"> Organizer   
+            </span>
+            <input
+              type="text"
+              placeholder="Organizer"
+              value={formData.organizer}
+              onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
+              className="w-full pl-24 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all"
+            />
+        </div>
+
+        <button type="submit" className="w-full bg-[#D1B3E2] hover:bg-[#C2A2D4] text-white py-4 rounded-2xl shadow-lg shadow-purple-100 flex justify-center items-center font-bold tracking-widest relative overflow-hidden">
           {loading ? 'Updating...' : 'Update Profile'}
         </button>
       </form>

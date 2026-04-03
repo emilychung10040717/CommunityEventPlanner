@@ -4,6 +4,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Events from './pages/Events';
+import ViewEvent from './pages/ViewEvent';
+import EditEvent from './components/EditEvent';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/events" element={<Events />} />
         <Route path="/" element={<Login />} />
+        <Route path="/viewevent" element={<ViewEvent/>} />
+        <Route path="/edit-event/:id" element={<EditEvent />} />
       </Routes>
     </Router>
   );

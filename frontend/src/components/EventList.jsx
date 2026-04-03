@@ -1,5 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
+import { Link } from 'react-router-dom';
 
 const EventList = ({ events, setEvents, setEditingEvent }) => {
   const { user } = useAuth();
@@ -18,7 +19,7 @@ const EventList = ({ events, setEvents, setEditingEvent }) => {
   return (
     <div>
       {events.map((event) => (
-        <div key={event._id} className="bg-gray-100 p-4 mb-4 rounded shadow">
+        <div key={event._id} className="bg-purple-100 p-4 mb-4 rounded shadow">
           <h2 className="font-bold">{event.title}</h2>
           <p>{event.description}</p>
           {/* <p className="text-sm text-gray-500">Deadline: {new Date(event.deadline).toLocaleDateString()}</p> */}
