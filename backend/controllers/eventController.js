@@ -15,13 +15,13 @@ const addEvent = async (req, res) => {
 const{
     title, capacity, organizer, category, ticketRequired,
     ageRestriction, suburb, location, expStartDate, expStartTime,
-    expFinDate,expFinTime, description, image
+    expFinDate,expFinTime, description
 } = req.body;
 try{
 const event = await Event.create({
     userId: req.user.id,title, capacity, organizer, category, ticketRequired,
     ageRestriction, suburb, location, expStartDate, expStartTime,
-    expFinDate,expFinTime, description, image
+    expFinDate,expFinTime, description
 });
 res.status(201).json(event); 
 } catch (error) {
@@ -34,7 +34,7 @@ const updateEvent = async (req, res) =>{
 const {
     title, capacity, organizer, category, ticketRequired,
     ageRestriction, suburb, location, expStartDate, expStartTime,
-    expFinDate,expFinTime, description, image
+    expFinDate,expFinTime, description
 } = req.body;
 try{
 const event = await Event.findById(req.params.id);
@@ -53,7 +53,6 @@ event.expStartTime = expStartTime || event.expStartTime;
 event.expFinDate = expFinDate || event.expFinDate;
 event.expFinTime = expFinTime || event.expFinTime;
 event.description = description || event.description;
-event.image = image || event.image;
 
 const updateEvent = await event.save();
 res.json(updateEvent);
@@ -74,4 +73,30 @@ res.json({message: "Event deleted"});
 res.status(500).json({message:error.message});
 }
 };
-module.exports={getEvents, addEvent, updateEvent, deleteEvent};
+
+/* 取得單一活動 (Read Single) */
+const getEventById = async (req, res) => {
+  try {
+    // 根據網址列傳過來的 ID 尋找
+    const event = await Event.findById(req.params.id);
+    
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // 安全檢查：確保這個活動屬於當前登入的使用者
+    if (event.userId.toString() !== req.user.id) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    res.json(event);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// 記得在匯出處加上它
+module.exports = { getEvents, addEvent, updateEvent, deleteEvent, getEventById };
+
+//module.exports={getEvents, addEvent, updateEvent, deleteEvent};
+
