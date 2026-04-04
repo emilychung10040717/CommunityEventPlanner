@@ -2,7 +2,7 @@ import { useState} from 'react';
 // import axiosInstance from '../axiosConfig';
 import EventForm from '../components/EventForm';
 // import EventList from '../components/EventList';
-import { useAuth } from '../context/AuthContext';
+//import { useAuth } from '../context/AuthContext';
 
 const Events = () => {
   // const { user } = useAuth();
