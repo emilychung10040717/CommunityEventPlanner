@@ -10,7 +10,7 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({ title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
         suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '', image: ''});
-  const fileInputRef = useRef(null);   {/*clear the field after update or add*/}
+  // const fileInputRef = useRef(null);   {/*clear the field after update or add*/}
 
   useEffect(() => {
     if (editingEvent) {

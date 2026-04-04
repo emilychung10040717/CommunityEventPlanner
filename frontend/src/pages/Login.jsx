@@ -93,9 +93,9 @@ const Login = () => {
           />
         </div>
         {/* 忘記密碼 */}
-        <div className="text-right">
+        {/* <div className="text-right">
           <a href="#" className="text-sm text-gray-600 hover:underline">Forgot Password?</a>
-        </div>
+        </div> */}
 
         <div className="text-left">
           <label className="flex items-center space-x-2">

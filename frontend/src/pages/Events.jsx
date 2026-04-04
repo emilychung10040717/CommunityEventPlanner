@@ -1,13 +1,13 @@
-import { useState, useEffect} from 'react';
-import axiosInstance from '../axiosConfig';
+import { useState} from 'react';
+// import axiosInstance from '../axiosConfig';
 import EventForm from '../components/EventForm';
-import EventList from '../components/EventList';
+// import EventList from '../components/EventList';
 import { useAuth } from '../context/AuthContext';
 
 const Events = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [events, setEvents] = useState([]);
-  const [editingEvent, setEditingEvent] = useState(null);
+  // const [editingEvent, setEditingEvent] = useState(null);
 
 
   return (
