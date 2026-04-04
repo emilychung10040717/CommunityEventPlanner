@@ -38,7 +38,7 @@ const Register = () => {
       </div>
     <div className="flex items-center justify-between mb-8">
       {/* 左側標題 */}
-      <h1 className="text-3xl font-semibold text-gray-800">Register</h1>
+      <h1 className="text-3xl font-semibold text-gray-800">REGISTER</h1>
 
       {/* 右側選項容器：改為 flex-col 讓內容上下排列 */}
       <div className="flex flex-col items-start space-y-2">

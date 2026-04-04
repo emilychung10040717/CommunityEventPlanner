@@ -3,7 +3,8 @@
 const Event = require('../models/Event');
 const getEvents = async (req , res) => {
 try{
-const events = await Event.find ({userId: req.user.id});
+//const events = await Event.find ({userId: req.user.id});
+const events = await Event.find ({userId: 1});
 res.json(events);
 } catch (error) {
 res.status(500).json({message: error.message});
