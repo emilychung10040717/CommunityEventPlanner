@@ -3,8 +3,8 @@
 const Event = require('../models/Event');
 const getEvents = async (req , res) => {
 try{
-//const events = await Event.find ({userId: req.user.id});
-const events = await Event.find ({userId: 1});
+const events = await Event.find ({userId: req.user.id});
+//const events = await Event.find ({userId: '69cf7fefa3cead5a6cada6be'});
 res.json(events);
 } catch (error) {
 res.status(500).json({message: error.message});
@@ -45,8 +45,8 @@ event.title = title || event.title;
 event.capacity = capacity || event.capacity;
 event.organizer = organizer || event.organizer;
 event.category = category || event.category;
-event.ticketRequired = ticketRequired || event.ticketRequired;
-event.ageRestriction = ageRestriction || event.ageRestriction;
+event.ticketRequired = ticketRequired ?? event.ticketRequired;
+event.ageRestriction = ageRestriction ?? event.ageRestriction;
 event.suburb = suburb || event.suburb;
 event.location = location || event.location;
 event.expStartDate = expStartDate || event.expStartDate;

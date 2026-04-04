@@ -199,7 +199,8 @@ describe('GetEvent Function Test', () => {
     await getEvents(req, res);
 
     // Assertions
-    expect(findStub.calledOnceWith({ userId })).to.be.true;
+    //expect(findStub.calledOnceWith({ userId })).to.be.true;
+    expect(findStub.calledOnceWith({ userId: req.user.id })).to.be.true;    //0504 update
     expect(res.json.calledWith(events)).to.be.true;
     expect(res.status.called).to.be.false; // No error status should be set
 
