@@ -12,7 +12,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post('/auth/login', formData);    //0504: delete "/api"
+      const response = await axiosInstance.post('/api/auth/login', formData);    //0504: delete "/api"
       login(response.data);
       navigate('/events');
     } catch (error) {
