@@ -45,28 +45,56 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting form data:", formData); // 🔹確認前端送出的資料
+    // 🔹 建立一個要送給後端的資料包
+    const dataToSubmit = {
+      ...formData,
+      userId: user._id || user.id, // 從 AuthContext 的 user 裡拿 ID
+      capacity: Number(formData.capacity), // 順便確保是數字
+      ticketRequired: String(formData.ticketRequired) === "true", // 確保是布林
+      ageRestriction: String(formData.ageRestriction) === "true"  // 確保是布林
+    };
     try {
+      const config = {
+        headers: { Authorization: `Bearer ${user.token}` },
+      };
+
+      // ⚠️ 注意：路徑請移除 /api (因為 axiosInstance 通常已經設定了 baseURL)
       if (editingEvent) {
-        const response = await axiosInstance.put(`/api/events/${editingEvent._id}`, formData, {      //0330 fix
-          headers: { Authorization: `Bearer ${user.token}`,'Content-Type': 'multipart/form-data' },
-        });
-          alert("Event Updated!");
-        setEvents(events.map((event) => (event._id === response.data._id ? response.data : event)));
+        await axiosInstance.put(`/events/${editingEvent._id}`, dataToSubmit, config);
+        alert("Event Updated!");
       } else {
-        const response = await axiosInstance.post('/api/events', formData, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-          alert("Event added!")
+        await axiosInstance.post('/events', dataToSubmit, config);
+        alert("Event added!");
         setEvents([...events, response.data]);
-      }
-      setEditingEvent(null);
-      setFormData({ title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
+        }
+        setEditingEvent(null);
+        setFormData({ title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
         suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '', image: '' });
-    } catch (error) {
-      alert('Failed to save event.');
-    }
-  };
+      } catch (error) {
+        alert('Failed to save event.');
+      }
+
+    // try {
+    //   if (editingEvent) {
+    //     const response = await axiosInstance.put(`/api/events/${editingEvent._id}`, Datato, {      //0330 fix
+    //       headers: { Authorization: `Bearer ${user.token}`,'Content-Type': 'multipart/form-data' },
+    //     });
+    //       alert("Event Updated!");
+    //     setEvents(events.map((event) => (event._id === response.data._id ? response.data : event)));
+    //   } else {
+    //     const response = await axiosInstance.post('/api/events', formData, {
+    //       headers: { Authorization: `Bearer ${user.token}` },
+    //     });
+    //       alert("Event added!")
+    //     setEvents([...events, response.data]);
+    //   }
+    //   setEditingEvent(null);
+    //   setFormData({ title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
+    //     suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '', image: '' });
+    // } catch (error) {
+    //   alert('Failed to save event.');
+    // }
+      // };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-8xl mx-auto bg-white p-10 rounded-[3rem] shadow-sm mb-6 border border-gray-100">
@@ -283,7 +311,7 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
   
 };
 
-
+}
 export default EventForm;
 
 
