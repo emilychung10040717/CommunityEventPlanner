@@ -138,7 +138,7 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
           <select 
             className="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-100 placeholder-gray-300"
             
-            onChange={(e) => setFormData({ ...formData, ticketRequired: e.target.value === true})}
+            onChange={(e) => setFormData({ ...formData, ticketRequired: e.target.value === "true"})}
           >
             <option>Select</option>
             <option value="true">Yes</option>
@@ -150,7 +150,7 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
           <label htmlFor="ageRestriction" className="block text-gray-700 font-medium ml-1">Age Restriction</label>
           <select 
             className="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-100 placeholder-gray-300"
-            onChange={(e) => setFormData({ ...formData, ageRestriction: e.target.value === true })}
+            onChange={(e) => setFormData({ ...formData, ageRestriction: e.target.value === "true" })}
           >
             <option>Select</option>
             <option value="true">18+</option>
