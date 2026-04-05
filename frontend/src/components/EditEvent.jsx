@@ -88,8 +88,8 @@ const EditEvent = () => {
       const payload = {
         ...formData,
         capacity: Number(formData.capacity), // string → number
-        ticketRequired: formData.ticketRequired === 'Yes', // string → boolean
-        ageRestriction: formData.ageRestriction === '18+', // string → boolean
+        ticketRequired: String(formData.ticketRequired) === 'true', // string → boolean
+        ageRestriction: String(formData.ageRestriction) === 'true', // string → boolean
         expStartDate: new Date(formData.expStartDate), // string → Date
         expFinDate: new Date(formData.expFinDate)      // string → Date
       };
