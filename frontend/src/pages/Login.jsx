@@ -12,7 +12,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post('/api/auth/login', formData);    //0504: delete "/api"
+      const response = await axiosInstance.post('/api/auth/login', formData);    
       login(response.data);
       navigate('/events');
     } catch (error) {
@@ -92,7 +92,7 @@ const Login = () => {
             className="w-full pl-24 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all"
           />
         </div>
-        {/* 忘記密碼 */}
+        {/* forget passwoord */}
         {/* <div className="text-right">
           <a href="#" className="text-sm text-gray-600 hover:underline">Forgot Password?</a>
         </div> */}

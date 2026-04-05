@@ -1,11 +1,11 @@
 import { useState} from 'react';
-// import axiosInstance from '../axiosConfig';
+//import axiosInstance from '../axiosConfig';
 import EventForm from '../components/EventForm';
 // import EventList from '../components/EventList';
 //import { useAuth } from '../context/AuthContext';
 
 const Events = () => {
-  // const { user } = useAuth();
+  //const { user } = useAuth();
   const [events, setEvents] = useState([]);
   // const [editingEvent, setEditingEvent] = useState(null);
 
@@ -13,7 +13,7 @@ const Events = () => {
   return (
     <div className="container mx-auto p-6">
       <EventForm
-        events={events}
+        events={events}     
         setEvents={setEvents}
         editingEvent={null}
         setEditingEvent={()=>{}}

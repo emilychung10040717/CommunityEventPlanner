@@ -3,7 +3,7 @@
 const Event = require('../models/Event');
 const getEvents = async (req , res) => {
 try{
-const events = await Event.find ({userId: req.user.id});
+const events = await Event.find ({userId: req.user.id});           
 //const events = await Event.find ({userId: '69cf7fefa3cead5a6cada6be'});
 res.json(events);
 } catch (error) {
@@ -87,7 +87,7 @@ const getEventById = async (req, res) => {
 
     // 安全檢查：確保這個活動屬於當前登入的使用者
     if (event.userId.toString() !== req.user.id) {
-      return res.status(401).json({ message: "Not authorized" });
+      return res.status(401).json({ message: "Not authorized" });    //0504update
     }
 
     res.json(event);
