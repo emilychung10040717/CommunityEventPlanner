@@ -29,13 +29,14 @@ const loginUser = async (req, res) => {
     //const isMatch = await bcrypt.compare(password, user.password);
     try {
         const user = await User.findOne({ email }).select('+password');
-        console.log('--- 登入除錯資訊 ---');
-        console.log('前端傳來的密碼 (password):', password);
-        console.log('資料庫抓到的使用者 (user):', user ? '有找到' : '沒找到');
-        if (user) {
-            console.log('資料庫裡的加密密碼 (user.password):', user.password);
-        }
-        console.log('--------------------');
+        // console.log('--- 登入除錯資訊 ---');
+        // console.log('前端傳來的密碼 (password):', password);
+        // console.log('資料庫抓到的使用者 (user):', user ? '有找到' : '沒找到');
+        // console.log('資料庫抓到的使用者 (user):', user._id ? '有找到' : '沒找到', user._id);
+        // if (user) {
+        //     console.log('資料庫裡的加密密碼 (user.password):', user.password);
+        // }
+        // console.log('--------------------');
         if (user && (await bcrypt.compare(password, user.password))) {
             res.json({ id: user.id, email: user.email, token: generateToken(user.id) });
         } else {

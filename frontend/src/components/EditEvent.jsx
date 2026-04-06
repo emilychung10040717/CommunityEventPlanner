@@ -13,11 +13,11 @@ const EditEvent = () => {
     title: '', capacity: '', organizer: '', category: '', 
     ticketRequired: false, ageRestriction: false, suburb: '', 
     location: '', expStartDate: '', expStartTime: '', 
-    expFinDate: '', expFinTime: '', description: '', image: null
+    expFinDate: '', expFinTime: '', description: ''
   });
   const [loading, setLoading] = useState(true);
 
-  // 輔助函式：將後端日期轉為 HTML input 接受的 YYYY-MM-DD
+  // Transfer date format into HTML
   const formatDate = (dateString) => {
     if (!dateString) return '';
     return dateString.split('T')[0];
@@ -42,13 +42,12 @@ const EditEvent = () => {
           ageRestriction: event.ageRestriction ?? false,
           suburb: event.suburb || '',
           location: event.location || '',
-          // 日期必須轉成 YYYY-MM-DD 否則 input type="date" 會顯示空白
+          // have to transfer date format into YYYY-MM-DD
           expStartDate: formatDate(event.expStartDate),
           expStartTime: event.expStartTime || '',
           expFinDate: formatDate(event.expFinDate),
           expFinTime: event.expFinTime || '',
           description: event.description || '',
-          image: null 
         });
 
         setLoading(false);
@@ -88,8 +87,10 @@ const EditEvent = () => {
       const payload = {
         ...formData,
         capacity: Number(formData.capacity), // string → number
-        ticketRequired: String(formData.ticketRequired) === 'true', // string → boolean
-        ageRestriction: String(formData.ageRestriction) === 'true', // string → boolean
+        // ticketRequired: String(formData.ticketRequired) === 'true', // string → boolean
+        // ageRestriction: String(formData.ageRestriction) === 'true', // string → boolean
+        ticketRequired: formData.ticketRequired === 'Yes', // string → boolean
+        ageRestriction: formData.ageRestriction === '18+', // string → boolean
         expStartDate: new Date(formData.expStartDate), // string → Date
         expFinDate: new Date(formData.expFinDate)      // string → Date
       };

@@ -100,4 +100,3 @@ const getEventById = async (req, res) => {
 module.exports = { getEvents, addEvent, updateEvent, deleteEvent, getEventById };
 
 //module.exports={getEvents, addEvent, updateEvent, deleteEvent};
-

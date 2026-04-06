@@ -1,7 +1,7 @@
 import { useState, useEffect} from 'react';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
-import { Link } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 
 
 
@@ -10,7 +10,7 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({ title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
         suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '', image: ''});
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (editingEvent) {
@@ -34,44 +34,126 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
       //result to default
     } else {
       setFormData({ 
-        title: '', capacity: '', organizer : '', category: '', ticketRequired : false, ageRestriction : false, 
-        suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '', image: '' 
+        title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
+        suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '' 
       });
     }
  
 
   }, [editingEvent]);
-
-
+  //update
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting form data:", formData); // 🔹確認前端送出的資料
-    try {
-      if (editingEvent) {
-        const response = await axiosInstance.put(`/api/events/${editingEvent._id}`, formData, {      //0330 fix
-          headers: { Authorization: `Bearer ${user.token}`,'Content-Type': 'multipart/form-data' },
-        });
-          alert("Event Updated!");
-        setEvents(events.map((event) => (event._id === response.data._id ? response.data : event)));
-      } else {
-        const response = await axiosInstance.post('/api/events', formData, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-          alert("Event added!")
-        setEvents([...events, response.data]);
-      }
-      setEditingEvent(null);
-      setFormData({ title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
-        suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '', image: '' });
-    } catch (error) {
-      alert('Failed to save event.');
+    
+// 🛡️ 1. 安全防護：確保使用者已登入，否則後續讀取 user._id 會報錯
+    if (!user || !user.token) {
+        alert("Session expired. Please log in again.");
+        return;
     }
-  };
+
+    // 🔍 監視器：開發時確認資料正確
+    console.log("Preparing to submit data:", formData);
+    // 🔹 1. 整理資料：確保所有欄位符合 Schema 的要求
+
+    console.log("Current user object:", user);
+    const dataToSubmit = {
+        ...formData,
+        userId: user._id || user.id,          // 🔴 關鍵：補上後端要求必填的 userId
+        capacity: formData.capacity,   // 確保是數字
+        ticketRequired: String(formData.ticketRequired) === "true", // 轉為布林值
+        ageRestriction: String(formData.ageRestriction) === "true"   // 轉為布林值
+    };
+
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${user.token}` },
+            "Content-Type": "application/json" // 明確指定內容類型
+        };
+        console.log('--- 登入除錯資訊 ---');
+        console.log('資料庫抓到的使用者 (user):', user._id ? '有找到' : '沒找到', user._id);
+
+        if (editingEvent && editingEvent._id) {
+            const response = await axiosInstance.put(`/api/events/${editingEvent._id}`, dataToSubmit, config);
+            alert("Event Updated!");
+            setEvents(events.map((event) => (event._id === response.data._id ? response.data : event)));
+        
+
+        } else {  // event add
+            // 🔍 這裡是最關鍵的除錯位置
+            console.log('--- [Debug] Create Event Step ---');
+            console.log('1. User ID from state:', user?._id || user?.id); 
+            console.log('2. Data to be sent to Backend:', dataToSubmit);
+            
+            // 如果你想更嚴格一點，可以在這裡加一個檢查，防止空 ID 送出
+            if (!dataToSubmit.userId) {
+                console.error('❌ 警告：userId 是空的！後端可能會拒絕這個請求。');
+            }
+
+            // 🔹 發送後，後端會回傳包含自動生成的 _id 的 event 物件
+            const response = await axiosInstance.post('/api/events', dataToSubmit, config);
+            
+            console.log('3. Backend Response:', response.data); // 確認後端存完後回傳的結果
+            alert("Event added!");
+            navigate('/viewevent');
+            // 🔹 這裡的 response.data 就包含了資料庫產生的 _id
+            setEvents([...events, response.data]); 
+        }
+
+        //成功後重置表單
+        setEditingEvent(null);
+        setFormData({ title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
+        suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '', image: ''  });
+
+    } catch (error) {
+// 🔍 強化報錯：讓妳知道是網路問題還是後端邏輯問題
+        const errorMsg = error.response?.data?.message || error.message || "Unknown error";
+        console.error("Submission Failed:", errorMsg);
+        alert(`Failed to save event: ${errorMsg}`);
+    }
+};
+
+
+//   //original
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     console.log("Submitting form data:", formData); // 🔹確認前端送出的資料
+//     try {
+//       if (editingEvent) {
+//         const response = await axiosInstance.put(`/api/events/${editingEvent._id}`, formData, {      //0330 fix
+//           headers: { Authorization: `Bearer ${user.token}`,'Content-Type': 'multipart/form-data' },
+//         });
+//           alert("Event Updated!");
+//         setEvents(events.map((event) => (event._id === response.data._id ? response.data : event)));
+//       } else {
+//         const response = await axiosInstance.post('/api/events', formData, {
+//           headers: { Authorization: `Bearer ${user.token}` },
+//         });
+//           alert("Event added!")
+//         setEvents([...events, response.data]);
+//       }
+//       setEditingEvent(null);
+//       setFormData({ title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
+//         suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '', image: '' });
+//     } catch (error) {
+//       alert('Failed to save event.');
+//     }
+//   };
+//   // // 提取重置邏輯，保持程式碼整潔
+// const resetForm = () => {
+//     setEditingEvent(null);
+//     setFormData({ 
+//         title: '', capacity: '', organizer : '', category: '', 
+//         ticketRequired : 'false', ageRestriction : 'false', 
+//         suburb : '', location : '', expStartDate : '', 
+//         expStartTime : '', expFinDate : '', expFinTime : '', 
+//         description: '',
+//     });
+// };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-8xl mx-auto bg-white p-10 rounded-[3rem] shadow-sm mb-6 border border-gray-100">
       <div className="bg-purple-100 py-3 rounded-xl mb-6 text-center">
-        <h1 className="text-3xl font-light text-purple-600 tracking-wide">{editingEvent ? 'Edit event' : 'Create event'}</h1>
+        <h1 className="text-3xl font-light text-purple-600 tracking-wide">Create event</h1>
       </div>
       {/* button for return back*/}
       <Link 
@@ -275,7 +357,7 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
       {/*submit button*/}
       <div className="flex justify-center">
         <button type="submit" className="w-full bg-[#D1B3E2] hover:bg-[#C2A2D4] text-white py-4 rounded-2xl shadow-lg shadow-purple-100 flex justify-center items-center font-bold tracking-widest relative overflow-hidden text-xl">
-          {editingEvent ? 'Update event' : 'Create event'}
+          Create Event
         </button>
       </div>
     </form>
