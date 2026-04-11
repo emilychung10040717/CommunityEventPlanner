@@ -9,6 +9,7 @@ const Profile = () => {
     email: '',
     phone: '',
     organizer: '',
+    role:'',
   });
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +26,7 @@ const Profile = () => {
           email: response.data.email,
           phone: response.data.phone || '',
           organizer: response.data.organizer || '',
+          role: response.data.role || '',
         });
       } catch (error) {
         alert('Failed to fetch profile. Please try again.');
@@ -101,6 +103,19 @@ const Profile = () => {
               value={formData.organizer}
               onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
               className="w-full pl-24 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all"
+            />
+        </div>
+        <div className ="relative">
+            <span className="absolute inset-y-0 left-4 flex items-center text-Black-400"> Role  
+            </span>
+            <input
+              type="text"
+              name='role'
+              placeholder="Role"
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              className="w-full pl-24 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all"
+              disabled
             />
         </div>
 

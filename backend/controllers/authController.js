@@ -8,7 +8,7 @@ const generateToken = (id) => {
 };
 
 const registerUser = async (req, res) => {
-    const { name, email, phone, organizer, password, confirmPassword } = req.body;
+    const { name, email, phone, organizer, password, confirmPassword, role } = req.body;
     try {
         if (password !== confirmPassword){
             return res.status(400).json({message: 'Confirm password is not match, please enter again!'});
@@ -16,8 +16,8 @@ const registerUser = async (req, res) => {
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists' });
         
-        const user = await User.create({ name, email, phone, organizer, password});
-        res.status(201).json({ id: user.id, name: user.name, email: user.email, token: generateToken(user.id) });
+        const user = await User.create({ name, email, phone, organizer, password, role: role || 'eventorganizer'});
+        res.status(201).json({ id: user.id, name: user.name, email: user.email, role: user.role, token: generateToken(user.id) });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: error.message });
@@ -25,7 +25,7 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
     //const isMatch = await bcrypt.compare(password, user.password);
     try {
         const user = await User.findOne({ email }).select('+password');
@@ -38,7 +38,18 @@ const loginUser = async (req, res) => {
         // }
         // console.log('--------------------');
         if (user && (await bcrypt.compare(password, user.password))) {
-            res.json({ id: user.id, email: user.email, token: generateToken(user.id) });
+            //res.json({ id: user.id, email: user.email, token: generateToken(user.id) });
+            if (role && user.role !== role) {
+                return res.status(401).json({ message: `Access denied: You are not a ${role}` });
+            }
+            //console.log('資料庫抓到的使用者 (user):', user.role ? '有找到' : '沒找到',user.role);
+            //console.log('資料庫傳入角色 (role):', role ? '有找到' : '沒找到',role);
+            res.json({ 
+                id: user.id, 
+                email: user.email, 
+                role: user.role,    // response role data
+                token: generateToken(user.id) 
+            });
         } else {
             res.status(401).json({ message: 'Invalid email or password' });
         }
@@ -60,6 +71,7 @@ const getProfile = async (req, res) => {
         email: user.email,
         phone: user.phone,
         organizer: user.organizer,
+        role: user.role,     //add on the response of role data
       });
     } catch (error) {
       res.status(500).json({ message: 'Server error', error: error.message });
@@ -71,7 +83,7 @@ const updateUserProfile = async (req, res) => {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        const { name, email, phone, organizer } = req.body;
+        const { name, email, phone, organizer} = req.body;
         user.name = name || user.name;
         user.email = email || user.email;
         user.phone = phone || user.phone;

@@ -5,17 +5,42 @@ import axiosInstance from '../axiosConfig';
 
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: '', password: '', role:'' });   //0411
   const { login } = useAuth();
   const navigate = useNavigate();
 
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value
+  }));
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // check if choose the role
+    if (!formData.role) {
+    alert("Please select your login role (Member or Organizer).");
+    return;
+  }
     try {
-      const response = await axiosInstance.post('/api/auth/login', formData);    
+      const response = await axiosInstance.post('/api/auth/login', formData);
+
+      //check error
+      console.log('--- 登入成功回應 ---');
+      console.log('所選角色 (role):', formData.role);
+      console.log('後端回傳使用者角色:', response.data.role);
+      console.log('後端回傳 User ID:', response.data.id);  
+
       login(response.data);
-      navigate('/events');
+      if (response.data.role === "eventorganizer")
+        navigate('/events');
+      else if (response.data.role === "member")
+        navigate("/profile");
     } catch (error) {
+      console.error('Login Error:', error.response?.data || error.message);
       alert('Login failed. Please try again.');
     }
   };
@@ -27,34 +52,40 @@ const Login = () => {
       </div>
 
 <div className="flex items-center justify-between mb-8">
-  {/* 左側標題 */}
+  {/* leftside title */}
   <h1 className="text-3xl font-semibold text-gray-800">Log in</h1>
 
-  {/* 右側選項容器：改為 flex-col 讓內容上下排列 */}
+  {/* rightside title */}
   <div className="flex flex-col items-start space-y-2">
     
-    {/* 第一個選項：Member (已禁用) */}
-    <div className="opacity-50 cursor-not-allowed">  {/*visualization for disabled status*/}
+    {/* Role：Member  */}
+    <div >  {/*visualization for disabled status*/}   {/*className="opacity-50 cursor-not-allowed"*/}
       <label className="flex items-center space-x-2">
         <input
           type="radio"
-          name="userType"
+          name="role"
+          value="member"
+          checked={formData.role === "member"}
+          onChange={handleChange} 
           className="w-4 h-4 accent-purple-400"
-          disabled // 真正的禁用屬性要加在 input 上
+          //disabled          // disable the functionality
         />
         <span className="text-gray-400 text-sm font-light leading-none">
           I'm a community member <br/>
-          <span className="text-xs text-red-300">[Not available now]</span>
+          {/*<span className="text-xs text-red-300">[Not available now]</span>*/}
         </span>
       </label>
     </div>
 
-    {/* 第二個選項：Organizer */}
+    {/* Role：Organizer */}
     <div>
       <label className="flex items-center space-x-2 cursor-pointer">
         <input
           type="radio"
-          name="userType"
+          name="role"
+          value="eventorganizer"
+          checked = {formData.role === "eventorganizer"}
+          onChange={handleChange} 
           className="w-4 h-4 accent-purple-400"
           defaultChecked
         />
@@ -103,7 +134,7 @@ const Login = () => {
             type="radio"
             name="userType"
             className="w-4 h-4 accent-purple-400"
-            disabled // 真正的禁用屬性要加在 input 上
+            disabled           // diable for the functionality
           />
           <span className="text-gray-400 text-sm font-light leading-none">
             I'm ADMIN <br/>
@@ -112,7 +143,7 @@ const Login = () => {
           </label>
         </div>
 
-        {/* 登入按鈕 - 這裡實作了圖片中的大圓弧與紫色漸層感 */}
+        {/* Login Button*/}
         <button
           type="submit"
           className="w-full bg-[#D1B3E2] hover:bg-[#C2A2D4] text-white py-4 rounded-2xl shadow-lg shadow-purple-100 flex justify-center items-center font-bold tracking-widest relative overflow-hidden"
