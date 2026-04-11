@@ -45,29 +45,29 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-// 🛡️ 1. 安全防護：確保使用者已登入，否則後續讀取 user._id 會報錯
+//
     if (!user || !user.token) {
         alert("Session expired. Please log in again.");
         return;
     }
 
-    // 🔍 監視器：開發時確認資料正確
+    //
     console.log("Preparing to submit data:", formData);
-    // 🔹 1. 整理資料：確保所有欄位符合 Schema 的要求
+    // 
 
     console.log("Current user object:", user);
     const dataToSubmit = {
         ...formData,
-        userId: user._id || user.id,          // 🔴 關鍵：補上後端要求必填的 userId
-        capacity: formData.capacity,   // 確保是數字
-        ticketRequired: String(formData.ticketRequired) === "true", // 轉為布林值
-        ageRestriction: String(formData.ageRestriction) === "true"   // 轉為布林值
+        userId: user._id || user.id,         
+        capacity: formData.capacity,   
+        ticketRequired: String(formData.ticketRequired) === "true",
+        ageRestriction: String(formData.ageRestriction) === "true"   
     };
 
     try {
         const config = {
             headers: { Authorization: `Bearer ${user.token}` },
-            "Content-Type": "application/json" // 明確指定內容類型
+            "Content-Type": "application/json" 
         };
         console.log('--- 登入除錯資訊 ---');
         console.log('資料庫抓到的使用者 (user):', user._id ? '有找到' : '沒找到', user._id);
@@ -78,34 +78,34 @@ const EventForm = ({ events, setEvents, editingEvent, setEditingEvent }) => {
             setEvents(events.map((event) => (event._id === response.data._id ? response.data : event)));
         
 
-        } else {  // event add
-            // 🔍 這裡是最關鍵的除錯位置
+        } else {  
+            
             console.log('--- [Debug] Create Event Step ---');
             console.log('1. User ID from state:', user?._id || user?.id); 
             console.log('2. Data to be sent to Backend:', dataToSubmit);
             
-            // 如果你想更嚴格一點，可以在這裡加一個檢查，防止空 ID 送出
+            // 
             if (!dataToSubmit.userId) {
                 console.error('❌ 警告：userId 是空的！後端可能會拒絕這個請求。');
             }
 
-            // 🔹 發送後，後端會回傳包含自動生成的 _id 的 event 物件
+            // 
             const response = await axiosInstance.post('/api/events', dataToSubmit, config);
             
-            console.log('3. Backend Response:', response.data); // 確認後端存完後回傳的結果
+            console.log('3. Backend Response:', response.data); 
             alert("Event added!");
             navigate('/viewevent');
-            // 🔹 這裡的 response.data 就包含了資料庫產生的 _id
+            // 
             setEvents([...events, response.data]); 
         }
 
-        //成功後重置表單
+        //
         setEditingEvent(null);
         setFormData({ title: '', capacity: '', organizer : '', category: '', ticketRequired : '', ageRestriction : '', 
         suburb : '', location : '', expStartDate : '', expStartTime : '', expFinDate : '', expFinTime : '', description: '', image: ''  });
 
     } catch (error) {
-// 🔍 強化報錯：讓妳知道是網路問題還是後端邏輯問題
+// 
         const errorMsg = error.response?.data?.message || error.message || "Unknown error";
         console.error("Submission Failed:", errorMsg);
         alert(`Failed to save event: ${errorMsg}`);
